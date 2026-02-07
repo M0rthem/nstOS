@@ -75,13 +75,14 @@ load_PM:
 
 [BITS 32]
 PModeMain:
+
 mov ax, DATA_OFFSET
 mov ds, ax
 mov es, ax
 mov fs, ax
 mov ss, ax
 mov gs, ax
-mov ebp, 0x9000
+mov ebp, 0x90000
 mov esp, ebp
 
 in al, 0x92
