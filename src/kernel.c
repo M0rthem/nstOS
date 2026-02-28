@@ -49,8 +49,6 @@ void setupIdt() {
     set_new_idt_32_entry(i, interrupt_gate_32_E, isr_stub);
   }
   set_new_idt_32_entry(0x20, interrupt_gate_32_E, timer_isr);
-  set_new_idt_32_entry(0x08, interrupt_gate_32_E,
-                       timer_isr); /*now timer is 0x08*/
   idt_descriptor.size = sizeof(idtTable) - 1;
   idt_descriptor.offset = (uint32_t)(uintptr_t)idtTable;
   __asm__ volatile("lidt (%0)" : : "r"(&idt_descriptor));
@@ -77,23 +75,40 @@ void idt_timer_hdlr(void) {
   __asm__ volatile("outb %%al, %%dx" : : "a"(0x20), "d"(0x20));
 }
 
+int reverse_bytestring(char *byte_start, char *byte_end){
+  unsigned int count_reverse = 0;
+  char *left = byte_start;
+  char *right = byte_end;
+  if(left > right){
+    return -1;
+  }
+  while(left != right){
+     *left ^= *right;
+     *right ^= *left;
+     *left ^= *right;
+     if(left + 1 == right){
+        break;
+     }
+    left++;
+    right--;
+  }
+  return 0;
+}
+
 void uint_to_str(uint32_t number, char *string) {
   if(number == 0){
     string[0] = '0';
     string[1] = '\n';
     return;
   }
-  char buffer[MAX_LEN_UINT32];
   unsigned char count_symbols = 0;
   while(number != 0){
-    buffer[count_symbols] = number % 10 + 48;
+    string[count_symbols] = number % 10 + 48;
     count_symbols++;
     number /= 10;  
   }
-  for(int i = 0; i != count_symbols; i++){
-    string[i] = buffer[count_symbols - i - 1];
-  }  
   string[count_symbols] = '\0';
+  reverse_bytestring(&string[0], &string[count_symbols - 1]);
 }
 
 void print_s(unsigned short *vga_start, char *str){ 
