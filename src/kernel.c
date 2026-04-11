@@ -62,16 +62,17 @@ void print_hello(void) {
 }
 
 uint32_t tick = 0;
+double sys_uptime = 0;
 
-void print_tick(void) {
-  char tick_str[MAX_LEN_UINT32 + sizeof("tick")] = "tick";
-  tick_str[4] = ' ';
-  uint_to_str(tick, &(tick_str[5]));
-  print_s((unsigned short *)0xb8020, tick_str);
+void print_uptime(void) {
+  char uptime_str[MAX_LEN_UINT32 + sizeof("uptime")] = "uptime";
+  uptime_str[6] = ' ';
+  uint_to_str((uint32_t)sys_uptime, &(uptime_str[7]));
+  print_s((unsigned short *)0xb8020, uptime_str);
 }
 void idt_timer_hdlr(void) {
-  tick++;
-  print_tick();
+  sys_uptime += 0.0549254;
+  print_uptime();
   __asm__ volatile("outb %%al, %%dx" : : "a"(0x20), "d"(0x20));
 }
 

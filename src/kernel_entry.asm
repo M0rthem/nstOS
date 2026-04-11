@@ -15,6 +15,16 @@ start:
     out 0xA1, al
 
     call setupIdt
+    
+    ;setup PIT (channel 0)
+    mov al, 0b00110110
+    out 0x43, al
+
+    mov al, 0x0
+    out 0x40, al
+    mov al, 0x0
+    out 0x40, al
+
     int 0xC8
     jmp $
 
