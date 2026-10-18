@@ -1,6 +1,7 @@
 [bits 32]
 [extern print_hello]
 [extern setupIdt]
+[extern kernel_start]
 [extern idt_stub_hdlr]
 [extern idt_timer_hdlr]
 
@@ -15,18 +16,10 @@ start:
     mov al, 0x28
     out 0xA1, al
 
-    call setupIdt
-    
-    ;setup PIT (channel 0)
-    mov al, 0b00110110
-    out 0x43, al
-
-    mov al, 0x0
-    out 0x40, al
-    mov al, 0x0
-    out 0x40, al
-
+	
+    call kernel_start
     jmp $
+
 
 global isr_stub
 isr_stub:

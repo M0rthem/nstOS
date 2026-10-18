@@ -1,9 +1,21 @@
 #include <stdint.h>
 
+
+#include "drivers/pit/exp/pit.h"
+#include "asm/exp/asm.h"
+
 #define MAX_LEN_UINT32 10
 #define VGA_START_TEXT 0x000B8000
 
 void uint_to_str(uint32_t number, char *string);
+void setupIdt();
+void print_s(unsigned short *vga_start, char *str);
+
+void kernel_start() {
+	setupIdt();
+	setupPIT();
+	while(1){ ASM_hlt(); }
+}
 
 typedef struct __attribute__((packed)) idt_entry {
   uint16_t low_offset;
