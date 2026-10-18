@@ -1,6 +1,8 @@
 #include <stdint.h>
 
 #define MAX_LEN_UINT32 10
+#define VGA_START_TEXT 0x000B8000
+
 void uint_to_str(uint32_t number, char *string);
 
 typedef struct __attribute__((packed)) idt_entry {
@@ -68,7 +70,7 @@ void print_uptime(void) {
   char uptime_str[MAX_LEN_UINT32 + sizeof("uptime")] = "uptime";
   uptime_str[6] = ' ';
   uint_to_str((uint32_t)sys_uptime, &(uptime_str[7]));
-  print_s((unsigned short *)0xb8020, uptime_str);
+  print_s((unsigned short*)VGA_START_TEXT, uptime_str);
 }
 void idt_timer_hdlr(void) {
   sys_uptime += 0.0549254;
@@ -99,7 +101,7 @@ int reverse_bytestring(char *byte_start, char *byte_end){
 void uint_to_str(uint32_t number, char *string) {
   if(number == 0){
     string[0] = '0';
-    string[1] = '\n';
+    string[1] = '\0';
     return;
   }
   unsigned char count_symbols = 0;

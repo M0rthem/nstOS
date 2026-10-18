@@ -6,6 +6,7 @@
 
 global start
 start:
+    ;remaping the PIC
     mov al, 0x11
     out 0x20, al
     out 0xA0, al
@@ -25,13 +26,12 @@ start:
     mov al, 0x0
     out 0x40, al
 
-    int 0xC8
     jmp $
 
 global isr_stub
 isr_stub:
     pusha
-    call print_hello
+    nop
     popa
     iret
 

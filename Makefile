@@ -30,3 +30,6 @@ clean:
 
 run:
 	qemu-system-i386 -drive format=raw,file=$(OS_IMAGE),if=floppy -m 128M
+
+run_hdd:
+	qemu-system-i386 -drive format=raw,file=$(OS_IMAGE),if=ide -m 128M

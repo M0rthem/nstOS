@@ -4,7 +4,6 @@
 KERNEL_LOCATION equ 0x1000
 
 BOOT_DISK: db 0
-mov [BOOT_DISK], dl
 
 CODE_OFFSET equ 0x8
 DATA_OFFSET equ 0x10
@@ -19,13 +18,14 @@ mov sp, 0x7c00
 sti ;Enable interrupts
 
 ;load kernel into KERNEL_LOCATION
+mov [BOOT_DISK], dl
 mov ah, 0x2
 mov al, 50
 mov ch, 0x0
 mov cl, 0x2
 mov dh, 0x0 
 mov bx, KERNEL_LOCATION
-mov dl, BOOT_DISK
+mov dl, [BOOT_DISK]
 int 0x13
 
 ;clear screen
