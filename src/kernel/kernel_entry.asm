@@ -1,0 +1,16 @@
+[bits 32]
+[extern kernel_start]
+
+global start
+start:
+    ;remaping the PIC
+    mov al, 0x11
+    out 0x20, al
+    out 0xA0, al
+    mov al, 0x20
+    out 0x21, al
+    mov al, 0x28
+    out 0xA1, al
+	
+    call kernel_start
+    jmp $
