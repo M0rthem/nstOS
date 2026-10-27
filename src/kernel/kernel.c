@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "cpu/idt/exp/idt.h"
+#include "cpu/pagging/exp/pagging.h"
 
 #include "drivers/pit/exp/pit.h"
 #include "drivers/vga/exp/vga.h"
@@ -14,6 +15,7 @@
 void uint_to_str(uint32_t number, char *string);
 
 void kernel_start() {
+	PAG_setup_identity_1Mb();
 	setupIdt();
 	setupPIT();
 	while(1){ ASM_hlt(); }
@@ -21,7 +23,7 @@ void kernel_start() {
 
 void print_hello(void) {
   char *hello_str = "Hello World!";
-  print_s((unsigned short *)0xb8000, hello_str); 
+  print_s((unsigned short *)VGA_START_TEXT, hello_str); 
 }
 
 uint32_t tick = 0;
@@ -32,11 +34,6 @@ void print_uptime(void) {
   uptime_str[6] = ' ';
   uint_to_str((uint32_t)sys_uptime, &(uptime_str[7]));
   print_s((unsigned short*)VGA_START_TEXT, uptime_str);
-}
-void idt_timer_hdlr(void) {
-  sys_uptime += 0.0549254;
-  print_uptime();
-  __asm__ volatile("outb %%al, %%dx" : : "a"(0x20), "d"(0x20));
 }
 
 int reverse_bytestring(char *byte_start, char *byte_end){
